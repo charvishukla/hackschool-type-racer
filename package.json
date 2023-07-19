@@ -1,0 +1,20 @@
+{
+  "name": "hackschool-type-racer",
+  "version": "1.0.0",
+  "description": "Type racer 2.0 for Hackschool!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/charvishukla/hackschool-type-racer.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/charvishukla/hackschool-type-racer/issues"
+  },
+  "homepage": "https://github.com/charvishukla/hackschool-type-racer#readme"
+}

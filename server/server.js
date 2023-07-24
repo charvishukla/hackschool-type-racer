@@ -15,8 +15,6 @@ const gameRoute = require('./routes/gameRoute');
 app.use(cors());
 app.use(express.json());
 
-
-
 dotenv.config(); // loading the environment vars 
 
 // db connection setup

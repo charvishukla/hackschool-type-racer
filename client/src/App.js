@@ -3,19 +3,7 @@ import useTypingGame, { CharStateType, PhaseType } from "react-typing-game-hook"
 
 const TypingGameDemo = () => {
   const [game, setGame] = useState(null);
-  const [text, setText] = useState("Hi! I hope you are having a great Summer! Did you watch the barbie movie?");
-
-  useEffect(() => {
-    fetch("http://localhost:5000/api/game/1")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.text) {
-          setText(data.text);
-        }
-        setGame(data);
-      })
-      .catch(err => console.error("Fetch Error: ", err));
-  }, []);
+  const [gameText, setGameText] = useState(""); // Initialize gameText with an empty string
 
   const {
     states: {
@@ -30,8 +18,51 @@ const TypingGameDemo = () => {
       endTime,
     },
     actions: { insertTyping, resetTyping, deleteTyping },
-  } = useTypingGame(text || ""); // Ensure text is not undefined
+  } = useTypingGame(gameText); // Pass gameText to the useTypingGame hook
 
+  useEffect(() => {
+    fetch("http://localhost:5000/api/game", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((newGame) => {
+        console.log("Response data:", newGame);
+        setGame(newGame);
+        setGameText(newGame.text); // Update gameText with the game text
+      })
+      .catch(err => console.error("Fetch Error: ", err));
+  }, []);
+
+  useEffect(() => {
+    if (game && game._id && currIndex === length - 1) {
+      const updatedGame = {
+        ...game,
+        length,
+        currIndex,
+        currChar,
+        correctChar,
+        errorChar,
+        phase,
+        startTime,
+        endTime,
+      };
+      fetch(`http://localhost:5000/api/game/${game._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedGame),
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+        .catch((err) => console.error(err)).catch(err => {
+          console.error("Fetch Error: ", err); // Log the error
+        });
+    }
+  }, [game, length, currIndex, currChar, correctChar, errorChar, phase, startTime, endTime]);
   const handleKey = (key) => {
     if (key === "Escape") {
       resetTyping();
@@ -45,30 +76,6 @@ const TypingGameDemo = () => {
       insertTyping(key);
     }
   };
-
-  useEffect(() => {
-    if (game) {
-      const updatedGame = {
-        ...game,
-        length,
-        currIndex,
-        currChar,
-        correctChar,
-        errorChar,
-        phase,
-        startTime,
-        endTime,
-      };
-
-      fetch(`http://localhost:5000/api/game/${game._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedGame),
-      }).catch((err) => console.error(err));
-    }
-  }, [length, currIndex, currChar, correctChar, errorChar, phase, startTime, endTime]);
 
   return (
     <div>
@@ -84,7 +91,7 @@ const TypingGameDemo = () => {
         }}
         tabIndex={0}
       >
-        {text && text.split("").map((char, index) => {
+        {gameText && gameText.split("").map((char, index) => {
           let state = charsState[index];
           let color =
             state === CharStateType.Incomplete

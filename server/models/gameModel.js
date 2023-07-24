@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
 
 const Game = new mongoose.Schema({
-  _id: Number,
   text: String,
   startTime: Number,
   endTime: Number,
   length: Number,
   currIndex: Number,
   currChar: String,
-  correctChar: Boolean,
+  correctChar: Number,
   errorChar: Boolean,
   phase: Number
 })

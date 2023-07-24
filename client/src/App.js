@@ -1,12 +1,22 @@
-import React from "react";
-import useTypingGame, {
-  CharStateType,
-  PhaseType
-} from "react-typing-game-hook";
-import "./styles.css";
+import React, { useEffect, useState } from "react";
+import useTypingGame, { CharStateType, PhaseType } from "react-typing-game-hook";
 
 const TypingGameDemo = () => {
-  let text = "The quick brown fox jumps over the lazy dog";
+  const [game, setGame] = useState(null);
+  const [text, setText] = useState("Hi! I hope you are having a great Summer! Did you watch the barbie movie?");
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/game/1")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.text) {
+          setText(data.text);
+        }
+        setGame(data);
+      })
+      .catch(err => console.error("Fetch Error: ", err));
+  }, []);
+
   const {
     states: {
       charsState,
@@ -17,10 +27,10 @@ const TypingGameDemo = () => {
       errorChar,
       phase,
       startTime,
-      endTime
+      endTime,
     },
-    actions: { insertTyping, resetTyping, deleteTyping }
-  } = useTypingGame(text);
+    actions: { insertTyping, resetTyping, deleteTyping },
+  } = useTypingGame(text || ""); // Ensure text is not undefined
 
   const handleKey = (key) => {
     if (key === "Escape") {
@@ -36,10 +46,36 @@ const TypingGameDemo = () => {
     }
   };
 
+  useEffect(() => {
+    if (game) {
+      const updatedGame = {
+        ...game,
+        length,
+        currIndex,
+        currChar,
+        correctChar,
+        errorChar,
+        phase,
+        startTime,
+        endTime,
+      };
+
+      fetch(`http://localhost:5000/api/game/${game._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedGame),
+      }).catch((err) => console.error(err));
+    }
+  }, [length, currIndex, currChar, correctChar, errorChar, phase, startTime, endTime]);
+
   return (
     <div>
-      <h1>React Typing Game Hook Demo</h1>
-      <p>Click on the text below and start typing (esc to reset)</p>
+      <h1>Hack School Fall 2023!!! </h1>
+      <p>Click on the text below and start typing (or hit esc to reset)</p>
+      <p>dont judge my frontend</p>
+      <p>alsooo, there's only one sentence, I didnt have time to set up faker lol</p>
       <div
         className="typing-test"
         onKeyDown={(e) => {
@@ -48,7 +84,7 @@ const TypingGameDemo = () => {
         }}
         tabIndex={0}
       >
-        {text.split("").map((char, index) => {
+        {text && text.split("").map((char, index) => {
           let state = charsState[index];
           let color =
             state === CharStateType.Incomplete
@@ -77,7 +113,7 @@ const TypingGameDemo = () => {
             currChar,
             correctChar,
             errorChar,
-            phase: PhaseType[phase]
+            phase: PhaseType[phase],
           },
           null,
           2

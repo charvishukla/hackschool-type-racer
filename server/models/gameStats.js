@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 const gameStatsSchema = new mongoose.Schema({
   sentence: { type: String }, 
-  score: {type: Number}
+  correctChars: {type: Number}, 
+  wpm : {type: Number}, 
+  time: {type: Number}
   // startTime: { type: Date },
   // endTime: { type: Date },
   // chars: { type: String },
@@ -11,7 +13,7 @@ const gameStatsSchema = new mongoose.Schema({
   // currIndex: { type: Number },
   // currChar: { type: String },
   // correctChar: { type: String },
-  // errorChar: { type: String },
+  // errorChar:x { type: String },
   // phase: { type: Number, enum: [0, 1, 2] },
 });
 

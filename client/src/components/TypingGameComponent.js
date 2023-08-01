@@ -1,4 +1,3 @@
-
 /**
  * useEffect : (i) lets you synchronize a component with an external system (lmao)
  *             (ii) we will be using it to check game completion conditions
@@ -8,13 +7,14 @@
 import React, { useEffect, useCallback } from "react";
 import useTypingGame, {PhaseType} from "react-typing-game-hook"; // for playing the game
 import axios from "axios"; // to make HTTP requests to the backend
+import './TypingGameComponent.css'
 console.log("Mounting Typing Game component...");
 const TypingGameComponent = () => {
 
   // useTypingGame to keep track of, and modify chars being typed and other stuff
-  let text = "As he looked out the window, he saw a clown walk by.";
+  let text = "They did nothing as the raccoon attacked the lady’s bag of food.";
   const {
-    states: { chars, charsState, phase},
+    states: { chars, charsState, phase, correctChar, errorChar},
     actions: { insertTyping, resetTyping, deleteTyping, getDuration },
   } = useTypingGame(text , { // i copied this object from the docs so idk what tgat is o
     skipCurrentWordOnSpace: true,
@@ -45,31 +45,29 @@ const TypingGameComponent = () => {
     }
   };
 
-  // state === 1 implies that the character has been typed correctly.
-  // basically filter through states for all characters, and count the number of  characters typed in correctly.
-  // we use callback to dynamically count
-  const calculateScore = useCallback(() => {
-    return charsState.filter((state) => state === 1).length; // we can also use state === 2 to calculate #of wrong
-  }, [charsState]);
 
   const calculateWPM = useCallback(() => {
     console.log("calculating words per min...");
     let numWords = text.split(" ").length;
-    console.log(numWords);
-    return numWords / (getDuration()*0.001)%60;
-  }, [getDuration])
+    let time = (getDuration()/ 1000)/60;
+    console.log("number of words: " + numWords);
+    console.log("duration in mins: " + time)
+    return numWords / time; // i think this is wrong lol 
+  }, [getDuration, text])
 
+  // if the game has ended, we send the game stats to the DB 
   const handleGameEnd = useCallback(() => {
     if (phase === PhaseType.Ended) {
       console.log(getDuration());
       sendGameStats({ 
         sentence: chars, 
-        correctChars: calculateScore(), 
+        correctcharacters: correctChar, // number of correct words 
+        incorrectcharacters: errorChar,
         wpm: calculateWPM(),
-        time: (getDuration() * 0.001)%60
+        time: (getDuration()/ 1000)/60, // miliseconds --> mins 
       });
     }
-  }, [chars, calculateScore, calculateWPM ,getDuration, phase]);
+  }, [chars, correctChar, errorChar, calculateWPM ,getDuration, phase]);
 
   /**
    * Checking for game completion conditions:
@@ -86,10 +84,10 @@ const TypingGameComponent = () => {
   // here, we render the game
   return (
     <div>
-      {!PhaseType.Started? (
+      { PhaseType.NotStarted ? ( // this is not workinggggggggggggggg
         <button onClick={handleGameStart}>Start</button> // call handleGameStart when Start is clicked
       ) : (
-        <h1
+        <h2
           onKeyDown={(e) => {
             // call different functions based on the key clicked
             const key = e.key;
@@ -114,14 +112,14 @@ const TypingGameComponent = () => {
             // if correct -> green
             // else red
             // **lmk if it wud be better to do a regular if statement instead... this is just short **
-            let color = state === 0 ? "black" : state === 1 ? "green" : "red";
+            let color = state === 0 ? "#292F36" : state === 1 ? "#417B5A" : "#FF6B6B";
             return (
               <span key={char + index} style={{ color }}>
                 {char}
               </span>
             );
           })}
-        </h1>
+        </h2>
       )}
     </div>
   );

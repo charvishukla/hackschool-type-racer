@@ -1,22 +1,17 @@
+console.log("creating a gameStatsSchema object...")
 const mongoose = require('mongoose');
 
+// this is basically what will go inside each document inside our db 
+// the model represents a structured schema for a collection, and allows us to do crud lmao
 const gameStatsSchema = new mongoose.Schema({
   sentence: { type: String }, 
-  correctChars: {type: Number}, 
+  correctcharacters: {type: Number}, 
+  incorrectcharacters:{ type: Number},
   wpm : {type: Number}, 
   time: {type: Number}
-  // startTime: { type: Date },
-  // endTime: { type: Date },
-  // chars: { type: String },
-  // charsState: { type: [Number] },
-  // length: { type: Number },
-  // currIndex: { type: Number },
-  // currChar: { type: String },
-  // correctChar: { type: String },
-  // errorChar:x { type: String },
-  // phase: { type: Number, enum: [0, 1, 2] },
 });
 
+// creates a model for a MongoDB collection named "GameStats"
 const GameStats = mongoose.model('GameStats', gameStatsSchema);
 
-module.exports = GameStats;
+module.exports = GameStats; // exporttt slayyy

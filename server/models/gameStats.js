@@ -1,14 +1,8 @@
 const mongoose = require('mongoose');
 
 const gameStatsSchema = new mongoose.Schema({
-  chars: {
-    type: String, 
-    required: true
-  }, 
-  score: {
-    type: [Number],
-    required: true
-  }
+  sentence: { type: String }, 
+  score: {type: Number}
   // startTime: { type: Date },
   // endTime: { type: Date },
   // chars: { type: String },

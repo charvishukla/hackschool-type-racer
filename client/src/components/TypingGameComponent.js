@@ -7,7 +7,7 @@ const TypingGameComponent = () => {
   const {
     states: { chars, charsState },
     actions: { insertTyping, resetTyping, deleteTyping },
-  } = useTypingGame('Click the Start button to begin typing!');
+  } = useTypingGame('ariana grande');
 
   const sendGameStats = async (stats) => {
     try {

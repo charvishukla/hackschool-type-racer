@@ -1,61 +1,37 @@
-const Game = require('../models/gameModel');
-const mongoose = require('mongoose');
+// controllers/gameController.js
+const GameStats = require('../models/gameStats');
 
-exports.createGame = async (req, res) => {
-  const game = new Game({
-    _id: new mongoose.Types.ObjectId(),
-    text: "yeet",
-    startTime: req.body.startTime,
-    endTime: req.body.endTime,
-    length: req.body.length,
-    currIndex: req.body.currIndex,
-    currChar: req.body.currChar,
-    correctChar: req.body.correctChar,
-    errorChar: req.body.errorChar,
-    phase: req.body.phase
-  });
+// Controller functions
+exports.getGameStats = async (req, res) => {
   try {
-    await game.save();
-    res.status(201).json(game);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    // Retrieve game stats from the database
+    const gameStats = await GameStats.find();
+    res.json(gameStats);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to retrieve game stats' });
   }
-}
+};
 
-exports.getGame = async (req, res) => {
+exports.createGameStats = async (req, res) => {
   try {
-    const game = await Game.findOne({
-      _id: req.params.id
-    });
-    if (!game) return res.status(404).json({
-      error: "Game not found"
-    });
-    res.status(200).json(game);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    // Create a new game stats document in the database
+    const newGameStats = await GameStats.create(req.body);
+    res.json(newGameStats);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create game stats' });
   }
-}
+};
 
-exports.updateGame = async (req, res) => {
+exports.updateGameStats = async (req, res) => {
   try {
-    const game = await Game.findOneAndUpdate({
-        _id: req.params.id
-      },
-      req.body, {
-        new: true
-      }
+    // Update the game stats document in the database
+    const updatedGameStats = await GameStats.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
     );
-    if (!game) return res.status(404).json({
-      error: "Game not found"
-    });
-    res.status(200).json(game);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.json(updatedGameStats);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update game stats' });
   }
 };

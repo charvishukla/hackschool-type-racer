@@ -10,7 +10,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // get the routes
-const gameRoute = require('./routes/gameRoute');
+const gameRoutes = require('./routes/gameRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -26,8 +26,12 @@ mongoose.connect(process.env.DB_URL, {
 .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // mount routes here ---> 
+app.use((req, res, next) => {
+  console.log(`${new Date().toString()} => ${req.originalUrl}`, req.body);
+  next();
+});
 
-app.use('/api', gameRoute);
+app.use('/api', gameRoutes);
 
 app.use(function (err, req, res, next) {
   console.error(err); // This should log more details about the error

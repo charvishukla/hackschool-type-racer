@@ -1,5 +1,5 @@
 import React from 'react';
-import TypingGameDemoComponent from './components/TypingGameDemoComponent';
+import TypingGameComponent from './components/TypingGameComponent';
 
 function App() {
   return (
@@ -8,8 +8,7 @@ function App() {
       <p>Click on the text below and start typing (or hit esc to reset)</p>
       <p>dont judge my frontend</p>
       <p>alsooo, there's only one sentence, I didnt have time to set up faker lol</p>
-      <TypingGameDemoComponent />
-  
+      <TypingGameComponent />
     </div>
   );
 }

@@ -1,11 +1,8 @@
-
-
-/*choose a background color */
-html, body {
-    background-color: #ffffffa6
+/* lmaooo this is so hard to style #helpp */
+.start-button {
+   margin-left: 400px;
 }
 
 h2 {
-    margin-top: 15px;
-    margin-left: 65px;
+    text-align: center;
 }

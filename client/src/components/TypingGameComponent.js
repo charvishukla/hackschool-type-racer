@@ -4,15 +4,17 @@
  * useCallback : (i) prevents component from re-rendering unless props have changed
  *              (ii) used to calculate score
  */
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import useTypingGame, {PhaseType} from "react-typing-game-hook"; // for playing the game
 import axios from "axios"; // to make HTTP requests to the backend
 import './TypingGameComponent.css'
 console.log("Mounting Typing Game component...");
 const TypingGameComponent = () => {
-
+  const [gameStarted, setGameStarted] = useState(false); // checks if the game has begun
+  const [statsObject, setStatsObject] = useState(null); // ensures object is not undefined
+ 
   // useTypingGame to keep track of, and modify chars being typed and other stuff
-  let text = "They did nothing as the raccoon attacked the lady’s bag of food.";
+  let text = "woof";
   const {
     states: { chars, charsState, phase, correctChar, errorChar},
     actions: { insertTyping, resetTyping, deleteTyping, getDuration },
@@ -42,6 +44,7 @@ const TypingGameComponent = () => {
     if (phase === PhaseType.NotStarted) {
       console.log(phase)
       resetTyping();
+      setGameStarted(true); // game started == trye 
     }
   };
 
@@ -59,13 +62,15 @@ const TypingGameComponent = () => {
   const handleGameEnd = useCallback(() => {
     if (phase === PhaseType.Ended) {
       console.log(getDuration());
-      sendGameStats({ 
+      let stats = { 
         sentence: chars, 
         correctcharacters: correctChar, // number of correct words 
         incorrectcharacters: errorChar,
         wpm: calculateWPM(),
         time: (getDuration()/ 1000)/60, // miliseconds --> mins 
-      });
+      }
+      sendGameStats(stats); // the axios request 
+      setStatsObject(stats); // this will be used to print the object on the screen
     }
   }, [chars, correctChar, errorChar, calculateWPM ,getDuration, phase]);
 
@@ -84,8 +89,8 @@ const TypingGameComponent = () => {
   // here, we render the game
   return (
     <div>
-      { PhaseType.NotStarted ? ( // this is not workinggggggggggggggg
-        <button onClick={handleGameStart}>Start</button> // call handleGameStart when Start is clicked
+      { !gameStarted ?  (
+        <button className="start-button" onClick={handleGameStart}>Start</button> // call handleGameStart when Start is clicked
       ) : (
         <h2
           onKeyDown={(e) => {
@@ -120,6 +125,16 @@ const TypingGameComponent = () => {
             );
           })}
         </h2>
+      )}
+      {statsObject && ( // Check if statsObject is not null before displaying it
+        <div className="stats">
+          <h3>Stats:</h3>
+          <p>Sentence: {statsObject.sentence}</p>
+          <p>Correct Characters: {statsObject.correctcharacters}</p>
+          <p>Incorrect Characters: {statsObject.incorrectcharacters}</p>
+          <p>Words Per Minute: {statsObject.wpm}</p>
+          <p>Time (in mins): {statsObject.time}</p>
+        </div>
       )}
     </div>
   );

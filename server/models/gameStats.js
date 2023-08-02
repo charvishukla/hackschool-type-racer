@@ -1,4 +1,4 @@
-console.log("creating a gameStatsSchema object...")
+console.log("Loading gameStatsSchema schema...")
 const mongoose = require('mongoose');
 
 // this is basically what will go inside each document inside our db 

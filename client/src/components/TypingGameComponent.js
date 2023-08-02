@@ -8,7 +8,8 @@ import React, { useEffect, useCallback, useState } from "react";
 import useTypingGame, {PhaseType} from "react-typing-game-hook"; // for playing the game
 import axios from "axios"; // to make HTTP requests to the backend
 import './TypingGameComponent.css'
-console.log("Mounting Typing Game component...");
+console.log("Rendering the Typing Game component...");
+
 const TypingGameComponent = () => {
   const [gameStarted, setGameStarted] = useState(false); // checks if the game has begun
   const [statsObject, setStatsObject] = useState(null); // ensures object is not undefined
@@ -25,12 +26,12 @@ const TypingGameComponent = () => {
   });
 
   // Axios for communicating with the backend (i.e. sending game stats)
-  // Endpoint: 'http://localhost:5000/api/game'
+  // Endpoint: 'http://localhost:5000/home/game'
   const sendGameStats = async (stats) => {
     try {
       console.log("sending game stats to the backend");
       // Make a POST request to create/update the game stats document
-      await axios.post("http://localhost:5000/api/game", stats);
+      await axios.post("http://localhost:5000/home/game", stats);
       console.log("Game stats created/updated:", stats);
     } catch (error) {
       console.error("Failed to create/update game stats:", error);
